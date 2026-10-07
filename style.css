@@ -21,3 +21,55 @@
   --fs-homepage: 0.875rem;
   --fs-detail: 1rem;
 }
+
+/* Reset */
+
+/* Header */
+.header {}
+.header__container {}
+.header__title {}
+.header__theme-toggle {}
+
+/* Main Content */
+.main {}
+.main__container {}
+
+/* Controls (Search & Filter) */
+.controls {}
+
+/* Search Bar */
+.search-bar {}
+.search-bar ion-icon {}
+.search-bar input {}
+
+/* Filter Dropdown */
+.filter {}
+.filter__toggle {}
+.filter__selected {}
+.filter__icon {}
+.filter__dropdown {}
+.filter__option {}
+
+/* Countries Grid Container */
+.countries-grid {}
+
+/* =================================
+   Responsive Media Query
+   ================================= */
+@media (min-width: 768px) {
+  
+}
+
+/* =================================
+   Accessibility: Prefers Reduced Motion
+   ================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
