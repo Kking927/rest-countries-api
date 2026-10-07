@@ -1,25 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;600;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;600;800&display=swap");
 
 :root {
   /* Colors */
-  --color-blue-900: hsl(209, 23%, 22%);
-  --color-blue-950: hsl(207, 26%, 17%);
+  --blue-900: hsl(209, 23%, 22%);
+  --blue-950: hsl(207, 26%, 17%);
 
-  --color-grey-950: hsl(200, 15%, 8%);
-  --color-grey-400: hsl(0, 0%, 50%);
-  --color-grey-50: hsl(0, 0%, 99%);
+  --grey-950: hsl(200, 15%, 8%);
+  --grey-400: hsl(0, 0%, 50%);
+  --grey-50: hsl(0, 0%, 99%);
 
-  --color-white: hsl(0, 100%, 100%);
+  --white: hsl(0, 100%, 100%);
 
   /* Typography */
   --font-family: "Nunito Sans", sans-serif;
 
+  /* Font Sizes */
+  --fs-homepage: clamp(0.75rem, 0.65rem + 0.5vw, 0.875rem);
+  --fs-detail: clamp(0.875rem, 0.75rem + 0.6vw, 1rem);
+  --fs-icon: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+  --fs-title: clamp(1.125rem, 1rem + 1vw, 1.5rem);
+
+  /* Font Weights */
   --fw-light: 300;
   --fw-semibold: 600;
   --fw-extrabold: 800;
-
-  --fs-homepage: 0.875rem;
-  --fs-detail: 1rem;
 }
 
 /* Reset */
@@ -30,8 +34,15 @@
 }
 
 body {
-  min-height: 100vh;
+  background-color: var(--grey-50);
+  color: var(--grey-950);
+  font-family: var(--font-family);
+  font-size: var(--fs-homepage);
+  font-weight: var(--fw-semibold);
   line-height: 1.5;
+  min-height: 100vh;
+  margin: 0;
+  padding: clamp(3rem, 6vw, 4.25rem) clamp(1.5rem, 4vw, 2rem);
 }
 
 ul,
@@ -61,52 +72,129 @@ select {
   font: inherit;
 }
 
+.site-wrapper {
+  width: 100%;
+  margin-inline: auto;
+}
+
 /* Header */
-.header {}
-.header__container {}
-.header__title {}
-.header__theme-toggle {}
+.header {
+  background-color: var(--white);
+  padding-block-end: clamp(3rem, 6vw, 4.25rem);
+}
+
+.header__container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__title {
+  font-size: var(--fs-title);
+}
+
+.header__theme-toggle {
+  font-size: var(--fs-detail);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header__theme-toggle ion-icon {
+  font-size: var(--fs-icon);
+}
 
 /* Main Content */
-.main {}
-.main__container {}
+.main {
+  padding-block: clamp(2rem, 1.65rem + 1.5vw, 3rem);
+}
+
+.main__container {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 5.55rem - 3.5vw, 4.875rem);
+}
 
 /* Controls (Search & Filter) */
-.controls {}
+.controls {
+
+}
 
 /* Search Bar */
-.search-bar {}
-.search-bar ion-icon {}
-.search-bar input {}
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  /* background-color: var(--white); */
+  background-color: red;
+  padding: 1.0625rem 2rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 30rem;
+  box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.05);
+}
+
+.search-bar ion-icon {
+  /* font-size: var(--fs-icon); */
+  font-size: 1.5rem;
+  font-weight: var(--fw-extrabold);
+}
+
+.search-bar input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+}
 
 /* Filter Dropdown */
 .filter {}
+
 .filter__toggle {}
+
 .filter__selected {}
+
 .filter__icon {}
+
 .filter__dropdown {}
+
 .filter__option {}
 
 /* Countries Grid Container */
 .countries-grid {}
 
 /* =================================
-   Responsive Media Query
+  Responsive Media Query
    ================================= */
 @media (min-width: 768px) {
-  
+body {
+  padding-block: clamp(1rem, 2vw, 1.875rem);
+  padding-inline: 0;
+}
+
+.site-wrapper {
+    max-width: 90rem;
+    margin-inline: auto;
+    padding-inline: clamp(3rem, 6vw, 5rem);
+  }
+
+.header {
+  padding-block-end: clamp(1rem, 2vw, 1.875rem);
+}
 }
 
 /* =================================
-   Accessibility: Prefers Reduced Motion
+  Accessibility: Prefers Reduced Motion
    ================================= */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+    scroll-behavior: auto;
   }
 }
