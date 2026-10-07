@@ -1,1 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;600;800&display=swap');
 
+:root {
+  /* Colors */
+  --color-blue-900: hsl(209, 23%, 22%);
+  --color-blue-950: hsl(207, 26%, 17%);
+
+  --color-grey-950: hsl(200, 15%, 8%);
+  --color-grey-400: hsl(0, 0%, 50%);
+  --color-grey-50: hsl(0, 0%, 99%);
+
+  --color-white: hsl(0, 100%, 100%);
+
+  /* Typography */
+  --font-family: "Nunito Sans", sans-serif;
+
+  --fw-light: 300;
+  --fw-semibold: 600;
+  --fw-extrabold: 800;
+
+  --fs-homepage: 0.875rem;
+  --fs-detail: 1rem;
+}
