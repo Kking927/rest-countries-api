@@ -6,24 +6,24 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pen</title>
+  <title>REST Countries API with Color Theme Switcher</title>
   <script src="script.js" defer></script>
 </head>
 
 <body>
-  <div class="site-wrapper">
-    <!-- Header Section -->
-    <header class="header">
-      <div class="header__container">
-        <h1 class="header__title">Where in the world?</h1>
-        <button type="button" class="header__theme-toggle">
-          <ion-icon name="moon-outline"></ion-icon>
-          <span>Dark Mode</span>
-        </button>
-      </div>
-    </header>
+  <!-- Header Section (Background goes edge-to-edge) -->
+  <header class="header">
+    <div class="site-wrapper header__container">
+      <h1 class="header__title">Where in the world?</h1>
+      <button type="button" class="header__theme-toggle">
+        <ion-icon name="moon-outline"></ion-icon>
+        <span>Dark Mode</span>
+      </button>
+    </div>
+  </header>
 
-    <!-- Main Content Section -->
+  <!-- Main Content Section Wrapper -->
+  <div class="site-wrapper">
     <main class="main">
       <div class="main__container">
         <!-- Search and Filter Controls -->
@@ -40,7 +40,7 @@
             </button>
             <ul class="filter__dropdown" hidden>
               <li class="filter__option" data-region="Africa">Africa</li>
-              <li class="filter__option" data-region="Americas">Americas</li>
+              <li class="filter__option" data-region="Americas">America</li>
               <li class="filter__option" data-region="Asia">Asia</li>
               <li class="filter__option" data-region="Europe">Europe</li>
               <li class="filter__option" data-region="Oceania">Oceania</li>
