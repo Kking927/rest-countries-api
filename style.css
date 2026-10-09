@@ -31,6 +31,13 @@
   /* Box Shadows */
   --shadow-header: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.05);
   --shadow-card: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+
+  /* Transitions */
+  --transition-speed: 0.2s;
+  --transition-easing: ease;
+  --transition-card: transform var(--transition-speed) var(--transition-easing), box-shadow var(--transition-speed) var(--transition-easing);
+  --transition-dropdown: opacity var(--transition-speed) var(--transition-easing), transform var(--transition-speed) var(--transition-easing), visibility var(--transition-speed);
 }
 
 /* Reset */
@@ -112,7 +119,7 @@ select {
   font-size: var(--fs-detail);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: clamp(0.375rem, 0.33rem + 0.19vw, 0.5rem);
 }
 
 .header__theme-toggle ion-icon {
@@ -173,7 +180,7 @@ select {
   align-items: center;
   gap: 2.875rem;
   background-color: var(--white);
-  padding: 1.0625rem 1rem 1.0625rem 1.5rem;
+  padding: clamp(0.875rem, 0.81rem + 0.28vw, 1.0625rem) clamp(0.75rem, 0.66rem + 0.38vw, 1rem) clamp(0.875rem, 0.81rem + 0.28vw, 1.0625rem) clamp(1rem, 0.82rem + 0.75vw, 1.5rem);
   border-radius: var(--br);
   width: 100%;
   max-width: 12.75rem;
@@ -189,12 +196,12 @@ select {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.4375rem;
+  gap: clamp(0.3rem, 0.25rem + 0.21vw, 0.4375rem);
 
   background-color: var(--white);
   padding: 0.9375rem 1.4375rem;
   border-radius: var(--br);
-  margin-block-start: 0.25rem;
+  margin-block-start: clamp(0.15rem, 0.11rem + 0.15vw, 0.25rem);
   width: 100%;
   max-width: 12.75rem;
   box-shadow: var(--shadow-card);
@@ -204,7 +211,7 @@ select {
   visibility: hidden;
   pointer-events: none;
   transform: translateY(-0.5rem);
-  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  transition: var(--transition-dropdown);
 }
 
 .filter.is-open .filter__dropdown {
@@ -233,17 +240,17 @@ select {
   box-shadow: var(--shadow-card);
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: var(--transition-card);
 }
 
 .country-card:hover {
   transform: translateY(-0.25rem);
-  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .country-card__flag {
   width: 100%;
-  height: 10rem;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
 }
 
@@ -254,12 +261,12 @@ select {
 .country-card__title {
   font-size: var(--fs-icon);
   font-weight: var(--fw-extrabold);
-  margin-block-end: 0.9875rem;
+  margin-block-end: clamp(0.75rem, 0.67rem + 0.36vw, 0.9875rem);
   line-height: 1.2;
 }
 
 .country-card__detail {
-  margin: 0.1875rem 0;
+  margin: clamp(0.125rem, 0.1rem + 0.09vw, 0.1875rem) 0;
 }
 
 .country-card__detail:last-child {
@@ -271,11 +278,33 @@ select {
 }
 
 /* =================================
-  Responsive Media Query
+  Responsive Media Queries
    ================================= */
-@media (min-width: 768px) {
+
+/* 2 Columns for Tablets */
+@media (min-width: 37.5rem) {
+  .countries-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 3 Columns for Large Tablets / Small Laptops */
+@media (min-width: 56rem) {
+  .controls {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .countries-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 4 Columns for Desktop */
+@media (min-width: 75rem) {
   .header {
-    padding-block: clamp(0.25rem, 0.9318rem - 0.9091vw, 0.75rem) clamp(0.5rem, 1.1818rem - 0.9091vw, 1rem);
+    padding-block: clamp(0.25rem, 0.07rem + 0.75vw, 0.75rem) clamp(0.5rem, 0.32rem + 0.75vw, 1rem);
   }
 
   .header__container {
@@ -286,15 +315,8 @@ select {
     padding-inline: clamp(3rem, 6vw, 5rem);
   }
 
-  .controls {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
-
   .countries-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 4.625rem;
   }
 }
 
