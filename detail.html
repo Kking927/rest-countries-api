@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Where in the world? - Country Detail</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Ionicons for back arrow and icons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="site-wrapper header__container">
+            <h1 class="header__title">
+                <a href="index.html" style="text-decoration: none; color: inherit;">Where in the world?</a>
+            </h1>
+            <button class="header__theme-toggle" aria-label="Toggle dark mode">
+                <ion-icon name="moon-outline"></ion-icon>
+                <span>Dark Mode</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="site-wrapper main__container">
+
+            <!-- Back Button -->
+            <a href="index.html" class="back-btn">
+                <ion-icon name="arrow-back-outline"></ion-icon>
+                <span>Back</span>
+            </a>
+
+            <!-- Detail Content Wrapper -->
+            <div class="country-detail">
+                <img src="" alt="" class="country-detail__flag">
+
+                <div class="country-detail__info">
+                    <h2 class="country-detail__name">Country Name</h2>
+
+                    <div class="country-detail__columns">
+                        <ul class="country-detail__list">
+                            <li><strong>Native Name:</strong> <span class="js-native"></span></li>
+                            <li><strong>Population:</strong> <span class="js-population"></span></li>
+                            <li><strong>Region:</strong> <span class="js-region"></span></li>
+                            <li><strong>Sub Region:</strong> <span class="js-subregion"></span></li>
+                            <li><strong>Capital:</strong> <span class="js-capital"></span></li>
+                        </ul>
+
+                        <ul class="country-detail__list">
+                            <li><strong>Top Level Domain:</strong> <span class="js-tld"></span></li>
+                            <li><strong>Currencies:</strong> <span class="js-currencies"></span></li>
+                            <li><strong>Languages:</strong> <span class="js-languages"></span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Border Countries -->
+                    <div class="border-countries">
+                        <h3 class="border-countries__title">Border Countries:</h3>
+                        <div class="border-countries__list">
+                            <!-- Dynamically populated border buttons will go here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const countryName = urlParams.get('name');
+
+        const flagImg = document.querySelector('.country-detail__flag');
+        const nameHeading = document.querySelector('.country-detail__name');
+        const nativeNameSpan = document.querySelector('.js-native');
+        const populationSpan = document.querySelector('.js-population');
+        const regionSpan = document.querySelector('.js-region');
+        const subRegionSpan = document.querySelector('.js-subregion');
+        const capitalSpan = document.querySelector('.js-capital');
+        const tldSpan = document.querySelector('.js-tld');
+        const currenciesSpan = document.querySelector('.js-currencies');
+        const languagesSpan = document.querySelector('.js-languages');
+        const borderContainer = document.querySelector('.border-countries__list');
+
+        async function fetchCountryDetails() {
+            if (!countryName) {
+                nameHeading.textContent = 'Country not found';
+                return;
+            }
+
+            try {
+                // Fetch directly from your local data.json file
+                const response = await fetch('./data.json');
+                const countries = await response.json();
+
+                // Find the specific country matching the URL parameter
+                const country = countries.find(c => c.name.toLowerCase() === countryName.toLowerCase());
+
+                if (!country) {
+                    nameHeading.textContent = 'Country not found';
+                    return;
+                }
+
+                // Populate basic info
+                flagImg.src = country.flag; // Note: local JSON usually uses 'flag' or 'flags.svg' depending on structure
+                flagImg.alt = `${country.name} flag`;
+                nameHeading.textContent = country.name;
+
+                nativeNameSpan.textContent = country.nativeName || 'N/A';
+                populationSpan.textContent = country.population.toLocaleString();
+                regionSpan.textContent = country.region;
+                subRegionSpan.textContent = country.subregion || 'N/A';
+                capitalSpan.textContent = country.capital || 'N/A';
+                tldSpan.textContent = country.topLevelDomain ? country.topLevelDomain.join(', ') : 'N/A';
+
+                currenciesSpan.textContent = country.currencies
+                    ? country.currencies.map(c => c.name).join(', ')
+                    : 'N/A';
+
+                languagesSpan.textContent = country.languages
+                    ? country.languages.map(l => l.name).join(', ')
+                    : 'N/A';
+
+                // Border Countries Logic using local data
+                if (country.borders && country.borders.length > 0) {
+                    borderContainer.innerHTML = '';
+
+                    // Find border countries by their 3-letter alpha3Code in the local array
+                    const borderCountries = countries.filter(c => country.borders.includes(c.alpha3Code));
+
+                    borderCountries.forEach(border => {
+                        const borderBtn = document.createElement('a');
+                        borderBtn.href = `detail.html?name=${encodeURIComponent(border.name)}`;
+                        borderBtn.className = 'border-btn';
+                        borderBtn.textContent = border.name;
+                        borderContainer.appendChild(borderBtn);
+                    });
+                } else {
+                    borderContainer.innerHTML = '<span>None</span>';
+                }
+
+            } catch (error) {
+                console.error('Error loading country detail from JSON:', error);
+                nameHeading.textContent = 'Failed to load country data.';
+            }
+        }
+
+        fetchCountryDetails();
+    </script>
+</body>
+
+</html>

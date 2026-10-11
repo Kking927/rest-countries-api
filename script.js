@@ -56,18 +56,24 @@ function renderCountries(countries) {
 
     // Loop through each country and create a card element
     countries.forEach(country => {
-        const card = document.createElement('article');
+        // 1. Create an <a> element instead of an <article>
+        const card = document.createElement('a');
         card.classList.add('country-card');
 
+        // 2. Set the href to detail.html with query parameters
+        // Handles both v2 (country.name) and v3.1 (country.name.common) API structures safely
+        const countryName = typeof country.name === 'string' ? country.name : country.name.common;
+        card.href = `detail.html?name=${encodeURIComponent(countryName)}`;
+
         card.innerHTML = `
-    <img src="${country.flags.svg}" alt="${country.name} flag" class="country-card__flag">
-    <div class="country-card__content">
-    <h2 class="country-card__title">${country.name}</h2>
-    <p class="country-card__detail"><strong>Population:</strong> ${country.population.toLocaleString()}</p>
-    <p class="country-card__detail"><strong>Region:</strong> ${country.region}</p>
-    <p class="country-card__detail"><strong>Capital:</strong> ${country.capital || 'N/A'}</p>
-    </div>
-`;
+            <img src="${country.flags.svg}" alt="${countryName} flag" class="country-card__flag">
+            <div class="country-card__content">
+                <h2 class="country-card__title">${countryName}</h2>
+                <p class="country-card__detail"><strong>Population:</strong> ${country.population.toLocaleString()}</p>
+                <p class="country-card__detail"><strong>Region:</strong> ${country.region}</p>
+                <p class="country-card__detail"><strong>Capital:</strong> ${country.capital || 'N/A'}</p>
+            </div>
+        `;
 
         // Append the card to the grid container
         countriesGrid.appendChild(card);
