@@ -478,11 +478,6 @@ select {
     white-space: nowrap;
     text-align: center;
   }
-
-  .border-btn:hover {
-    transform: translateY(-0.125rem);
-    box-shadow: var(--shadow-card-hover);
-  }
 }
 
 /* =================================
