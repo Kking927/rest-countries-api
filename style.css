@@ -103,6 +103,7 @@ a {
 }
 
 button {
+  font: inherit;
   background: none;
   border: none;
   padding: 0;
@@ -116,7 +117,6 @@ picture {
 }
 
 input,
-button,
 textarea,
 select {
   font: inherit;
@@ -228,7 +228,7 @@ select {
   gap: clamp(0.3rem, 0.25rem + 0.21vw, 0.4375rem);
 
   background-color: var(--white);
-  padding: 0.9375rem 1.4375rem;
+  padding: clamp(0.625rem, 0.5rem + 0.5vw, 0.9375rem) clamp(1rem, 0.8rem + 1vw, 1.4375rem);
   border-radius: var(--br);
   margin-block-start: clamp(0.15rem, 0.11rem + 0.15vw, 0.25rem);
   width: 100%;

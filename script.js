@@ -139,6 +139,8 @@ document.addEventListener('click', () => {
 filterOptions.forEach(option => {
     option.addEventListener('click', (e) => {
         const selectedRegion = e.target.dataset.region;
+        // Update dropdown button text (e.g., "Filter by Region" -> "Europe")
+        filterSelectedText.textContent = e.target.textContent;
 
         // 1. Save region to sessionStorage and clear search query
         sessionStorage.setItem('selectedRegion', selectedRegion);
