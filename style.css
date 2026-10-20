@@ -41,6 +41,32 @@
   --transition-dropdown: opacity var(--transition-speed) var(--transition-easing), transform var(--transition-speed) var(--transition-easing), visibility var(--transition-speed);
 }
 
+/* Dark Mode Overrides */
+body.dark {
+  --grey-50: var(--blue-950);
+  --grey-950: hsl(0, 100%, 100%);
+  --white: hsl(209, 23%, 22%);
+  --shadow-header: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
+  --shadow-card: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
+  --shadow-card-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
+}
+
+body.dark .header__theme-toggle,
+body.dark .search-bar input,
+body.dark .filter__toggle,
+body.dark .filter__dropdown {
+  color: hsl(0, 100%, 100%);
+}
+
+body.dark .search-bar input::placeholder {
+  color: hsl(0, 100%, 100%);
+  opacity: 0.7;
+}
+
+body.dark .search-icon {
+  filter: brightness(0) invert(1);
+}
+
 /* Reset */
 *,
 *::before,
@@ -96,7 +122,6 @@ select {
   font: inherit;
 }
 
-/* Header */
 .header {
   position: relative;
   background-color: var(--white);
@@ -134,7 +159,6 @@ select {
   font-size: var(--fs-icon);
 }
 
-/* Main Content */
 .main {
   padding: clamp(2.75rem, 2.5rem + 0.5vw, 3rem) clamp(1rem, 0.7273rem + 1.3636vw, 1.875rem);
 }
@@ -145,14 +169,12 @@ select {
   gap: clamp(2.8rem, 2.65rem + 0.3vw, 3rem);
 }
 
-/* Controls (Search & Filter) */
 .controls {
   display: flex;
   flex-direction: column;
   gap: clamp(2rem, 1rem + 3vw, 4.875rem);
 }
 
-/* Search Bar */
 .search-bar {
   display: flex;
   align-items: center;
@@ -178,7 +200,6 @@ select {
   opacity: 0.7;
 }
 
-/* Filter Dropdown */
 .filter {
   position: relative;
 }
@@ -214,7 +235,6 @@ select {
   max-width: 12.75rem;
   box-shadow: var(--shadow-card);
 
-  /* Hidden by default state */
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -233,7 +253,6 @@ select {
   cursor: pointer;
 }
 
-/* Countries Grid Container */
 .countries-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -241,7 +260,6 @@ select {
   padding-inline: 2.375rem;
 }
 
-/* Individual Country Card Styles */
 .country-card {
   background-color: var(--white);
   border-radius: var(--br);
@@ -323,11 +341,11 @@ select {
   box-shadow: var(--shadow-card-hover);
 }
 
-/* Main Detail Layout Stacked for Mobile */
 .country-detail {
   display: grid;
   grid-template-columns: 1fr;
   gap: clamp(2.5rem, 1.85rem + 2.78vw, 5rem);
+  justify-items: center;
 }
 
 .country-detail__flag {
@@ -342,13 +360,14 @@ select {
   font-size: var(--fs-detail);
   font-weight: var(--fw-bold);
   margin-block-end: clamp(1rem, 0.5vw + 0.75rem, 1.5rem);
+  width: 100%;
+  max-width: 35rem;
 }
 
 .country-detail__name {
   font-size: var(--fs-country-name);
 }
 
-/* Info columns stacked by default on mobile */
 .country-detail__columns {
   display: flex;
   flex-direction: column;
@@ -371,11 +390,45 @@ select {
   font-weight: var(--fw-semibold);
 }
 
-/* Border Countries Stacked Base Layout */
 .border-countries {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(0.5rem, 0.5vw + 0.3rem, 1rem);
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.5rem, 0.5vw + 0.3rem, 1rem);
+}
+
+.border-countries__title {
+    font-size: var(--fs-md);
+    font-weight: var(--fw-semibold);
+}
+
+.border-countries__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(0.25rem, 0.25vw + 0.15rem, 0.5rem);
+}
+
+.border-btn {
+    background-color: var(--white);
+    color: inherit;
+    text-decoration: none;
+    padding: 0.35rem 1rem;
+    font-size: var(--fs-homepage);
+    border-radius: 0.125rem;
+    box-shadow: var(--shadow-card);
+    transition: transform var(--transition-card), box-shadow var(--transition-card);
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 6.125rem; 
+    white-space: nowrap;
+    text-align: center;
+}
+
+.border-btn:hover {
+    transform: translateY(-0.125rem);
+    box-shadow: var(--shadow-card-hover);
 }
 
 /* =================================
@@ -399,6 +452,16 @@ select {
 
   .countries-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .border-countries {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .border-countries__title {
+    white-space: nowrap;
   }
 }
 
@@ -441,47 +504,6 @@ select {
     justify-content: space-between;
     align-items: flex-start;
     padding-inline-end: clamp(0rem, 0.2vw + 0.05rem, 0.125rem);
-  }
-
-  .border-countries {
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .border-countries__title {
-    font-size: var(--fs-md);
-    font-weight: var(--fw-semibold);
-    white-space: nowrap;
-  }
-
-  .border-countries__list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: clamp(0.25rem, 0.25vw + 0.15rem, 0.5rem);
-  }
-
-  .border-btn {
-    background-color: var(--white);
-    color: inherit;
-    text-decoration: none;
-    padding: 0.25rem 1.25rem;
-    font-size: var(--fs-homepage);
-    border-radius: 0.125rem;
-    box-shadow: var(--shadow-card);
-    transition: transform var(--transition-card), box-shadow var(--transition-card);
-
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 6.125rem;
-    white-space: nowrap;
-    text-align: center;
-  }
-
-  .border-btn:hover {
-    transform: translateY(-0.125rem);
-    box-shadow: var(--shadow-card-hover);
   }
 }
 

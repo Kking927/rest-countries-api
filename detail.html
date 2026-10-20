@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script src="theme.js" defer></script>
+    <script src="detail.js" defer></script>
 </head>
 
 <body>
@@ -30,10 +34,10 @@
         <div class="site-wrapper main__container detail-main-container">
 
             <!-- Back Button -->
-            <a href="index.html" class="back-btn">
+            <button type="button" class="back-btn">
                 <i class="fas fa-long-arrow-left"></i>
                 <span>Back</span>
-            </a>
+            </button>
 
             <!-- Detail Content Wrapper -->
             <div class="country-detail">
@@ -70,88 +74,6 @@
 
         </div>
     </main>
-
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const countryName = urlParams.get('name');
-
-        const flagImg = document.querySelector('.country-detail__flag');
-        const nameHeading = document.querySelector('.country-detail__name');
-        const nativeNameSpan = document.querySelector('.js-native');
-        const populationSpan = document.querySelector('.js-population');
-        const regionSpan = document.querySelector('.js-region');
-        const subRegionSpan = document.querySelector('.js-subregion');
-        const capitalSpan = document.querySelector('.js-capital');
-        const tldSpan = document.querySelector('.js-tld');
-        const currenciesSpan = document.querySelector('.js-currencies');
-        const languagesSpan = document.querySelector('.js-languages');
-        const borderContainer = document.querySelector('.border-countries__list');
-
-        async function fetchCountryDetails() {
-            if (!countryName) {
-                nameHeading.textContent = 'Country not found';
-                return;
-            }
-
-            try {
-                // Fetch directly from your local data.json file
-                const response = await fetch('./data.json');
-                const countries = await response.json();
-
-                // Find the specific country matching the URL parameter
-                const country = countries.find(c => c.name.toLowerCase() === countryName.toLowerCase());
-
-                if (!country) {
-                    nameHeading.textContent = 'Country not found';
-                    return;
-                }
-
-                // Populate basic info
-                flagImg.src = country.flag; // Note: local JSON usually uses 'flag' or 'flags.svg' depending on structure
-                flagImg.alt = `${country.name} flag`;
-                nameHeading.textContent = country.name;
-
-                nativeNameSpan.textContent = country.nativeName || 'N/A';
-                populationSpan.textContent = country.population.toLocaleString();
-                regionSpan.textContent = country.region;
-                subRegionSpan.textContent = country.subregion || 'N/A';
-                capitalSpan.textContent = country.capital || 'N/A';
-                tldSpan.textContent = country.topLevelDomain ? country.topLevelDomain.join(', ') : 'N/A';
-
-                currenciesSpan.textContent = country.currencies
-                    ? country.currencies.map(c => c.name).join(', ')
-                    : 'N/A';
-
-                languagesSpan.textContent = country.languages
-                    ? country.languages.map(l => l.name).join(', ')
-                    : 'N/A';
-
-                // Border Countries Logic using local data
-                if (country.borders && country.borders.length > 0) {
-                    borderContainer.innerHTML = '';
-
-                    // Find border countries by their 3-letter alpha3Code in the local array
-                    const borderCountries = countries.filter(c => country.borders.includes(c.alpha3Code));
-
-                    borderCountries.forEach(border => {
-                        const borderBtn = document.createElement('a');
-                        borderBtn.href = `detail.html?name=${encodeURIComponent(border.name)}`;
-                        borderBtn.className = 'border-btn';
-                        borderBtn.textContent = border.name;
-                        borderContainer.appendChild(borderBtn);
-                    });
-                } else {
-                    borderContainer.innerHTML = '<span>None</span>';
-                }
-
-            } catch (error) {
-                console.error('Error loading country detail from JSON:', error);
-                nameHeading.textContent = 'Failed to load country data.';
-            }
-        }
-
-        fetchCountryDetails();
-    </script>
 </body>
 
 </html>

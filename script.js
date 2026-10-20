@@ -14,17 +14,12 @@ const filterToggle = document.querySelector('.filter__toggle');
 const filterSelectedText = document.querySelector('.filter__selected');
 const filterOptions = document.querySelectorAll('.filter__option');
 
-// 4. Theme Toggle Button (for the dark mode bonus later)
-const themeToggleBtn = document.querySelector('.header__theme-toggle');
-
 // =================================
 // State & Data Fetching
 // =================================
 
-// Global state variable to store all country data
 let allCountries = [];
 
-// Async function to fetch country data from data.json
 async function fetchCountries() {
     try {
         const response = await fetch('./data.json');
@@ -35,7 +30,36 @@ async function fetchCountries() {
 
         allCountries = await response.json();
 
-        // Once data is loaded,  call  render function here
+        // Check how the user arrived on the page
+        const navEntries = performance.getEntriesByType('navigation');
+        const navType = navEntries.length > 0 ? navEntries[0].type : '';
+
+        // ONLY restore session state if they arrived via the Back/Forward buttons
+        if (navType === 'back_forward') {
+            const savedSearch = sessionStorage.getItem('searchQuery');
+            const savedRegion = sessionStorage.getItem('selectedRegion');
+
+            if (savedSearch) {
+                searchInput.value = savedSearch;
+                const filtered = allCountries.filter(country => {
+                    const nameMatch = country.name.toLowerCase().includes(savedSearch);
+                    const altMatch = country.altSpellings && country.altSpellings.some(alt => alt.toLowerCase().includes(savedSearch));
+                    return nameMatch || altMatch;
+                });
+                renderCountries(filtered);
+                return;
+            } else if (savedRegion && savedRegion !== 'all') {
+                const filtered = allCountries.filter(country =>
+                    country.region.toLowerCase() === savedRegion.toLowerCase()
+                );
+                renderCountries(filtered);
+                return;
+            }
+        }
+
+        // DEFAULT: For fresh visits, reloads, or logo clicks, clear state and show all countries
+        sessionStorage.removeItem('searchQuery');
+        sessionStorage.removeItem('selectedRegion');
         renderCountries(allCountries);
 
     } catch (error) {
@@ -43,7 +67,6 @@ async function fetchCountries() {
     }
 }
 
-// Call the function when the script loads
 fetchCountries();
 
 // =================================
@@ -56,12 +79,9 @@ function renderCountries(countries) {
 
     // Loop through each country and create a card element
     countries.forEach(country => {
-        // 1. Create an <a> element instead of an <article>
         const card = document.createElement('a');
         card.classList.add('country-card');
 
-        // 2. Set the href to detail.html with query parameters
-        // Handles both v2 (country.name) and v3.1 (country.name.common) API structures safely
         const countryName = typeof country.name === 'string' ? country.name : country.name.common;
         card.href = `detail.html?name=${encodeURIComponent(countryName)}`;
 
@@ -75,7 +95,6 @@ function renderCountries(countries) {
             </div>
         `;
 
-        // Append the card to the grid container
         countriesGrid.appendChild(card);
     });
 }
@@ -87,11 +106,13 @@ function renderCountries(countries) {
 searchInput.addEventListener('input', (e) => {
     const searchTerm = e.target.value.toLowerCase().trim();
 
-    const filteredCountries = allCountries.filter(country => {
-        // Check if the main name matches
-        const nameMatch = country.name.toLowerCase().includes(searchTerm);
+    // 1. Save search term to sessionStorage
+    sessionStorage.setItem('searchQuery', searchTerm);
+    // Clear region filter when user searches manually
+    sessionStorage.removeItem('selectedRegion');
 
-        // Check if any alternative spellings match (e.g., "England", "UK", etc.)
+    const filteredCountries = allCountries.filter(country => {
+        const nameMatch = country.name.toLowerCase().includes(searchTerm);
         const altSpellingMatch = country.altSpellings && country.altSpellings.some(alt =>
             alt.toLowerCase().includes(searchTerm)
         );
@@ -119,14 +140,16 @@ filterOptions.forEach(option => {
     option.addEventListener('click', (e) => {
         const selectedRegion = e.target.dataset.region;
 
-        // If the user clicks "All Regions" or a missing attribute, render all countries
+        // 1. Save region to sessionStorage and clear search query
+        sessionStorage.setItem('selectedRegion', selectedRegion);
+        sessionStorage.removeItem('searchQuery');
+
         if (!selectedRegion || selectedRegion === 'all') {
             renderCountries(allCountries);
             filterContainer.classList.remove('is-open');
             return;
         }
 
-        // Filter using the exact data-region value (e.g., "Americas", "Asia", etc.)
         const filteredCountries = allCountries.filter(country =>
             country.region.toLowerCase() === selectedRegion.toLowerCase()
         );
