@@ -500,10 +500,10 @@ body.dark {
   --shadow-card-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
 }
 
-body.dark .header__theme-toggle,
-body.dark .search-bar input,
+body.dark .filter__dropdown,
 body.dark .filter__toggle,
-body.dark .filter__dropdown {
+body.dark .header__theme-toggle,
+body.dark .search-bar input {
   color: var(--grey-950);
 }
 
