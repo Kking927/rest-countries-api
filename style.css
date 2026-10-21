@@ -500,6 +500,7 @@ body.dark {
   --shadow-card-hover: 0 0.5rem 1rem rgba(0, 0, 0, 0.3);
 }
 
+/* stylelint-disable-next-line no-descending-specificity */
 body.dark .filter__dropdown,
 body.dark .filter__toggle,
 body.dark .header__theme-toggle,
