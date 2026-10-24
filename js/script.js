@@ -2,65 +2,56 @@
 // DOM Elements Selection
 // =================================
 
-// 1. Countries Grid (where cards will be dynamically rendered)
 const countriesGrid = document.querySelector('.countries-grid');
-
-// 2. Search Bar Input
 const searchInput = document.querySelector('.search-bar input');
-
-// 3. Filter Components
 const filterContainer = document.querySelector('.filter');
 const filterToggle = document.querySelector('.filter__toggle');
 const filterSelectedText = document.querySelector('.filter__selected');
 const filterOptions = document.querySelectorAll('.filter__option');
+const clearButton = document.querySelector('.search-clear');
 
 // =================================
-// State & Data Fetching
+// Single Source of Truth State
 // =================================
+
+const state = {
+    query: '',
+    region: 'all'
+};
 
 let allCountries = [];
+
+// =================================
+// Fetch Countries & Initialize State from URL
+// =================================
 
 async function fetchCountries() {
     try {
         const response = await fetch('./data.json');
-
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         allCountries = await response.json();
 
-        // Check how the user arrived on the page
-        const navEntries = performance.getEntriesByType('navigation');
-        const navType = navEntries.length > 0 ? navEntries[0].type : '';
+        // Read initial state from URL parameters so back/forward navigation and reloads work seamlessly
+        const urlParams = new URLSearchParams(window.location.search);
+        state.query = urlParams.get('search') || '';
+        state.region = urlParams.get('region') || 'all';
 
-        // ONLY restore session state if they arrived via the Back/Forward buttons
-        if (navType === 'back_forward') {
-            const savedSearch = sessionStorage.getItem('searchQuery');
-            const savedRegion = sessionStorage.getItem('selectedRegion');
+        // Sync UI inputs with the initial URL state
+        searchInput.value = state.query;
+        clearButton.style.display = state.query ? 'block' : 'none';
 
-            if (savedSearch) {
-                searchInput.value = savedSearch;
-                const filtered = allCountries.filter(country => {
-                    const nameMatch = country.name.toLowerCase().includes(savedSearch);
-                    const altMatch = country.altSpellings && country.altSpellings.some(alt => alt.toLowerCase().includes(savedSearch));
-                    return nameMatch || altMatch;
-                });
-                renderCountries(filtered);
-                return;
-            } else if (savedRegion && savedRegion !== 'all') {
-                const filtered = allCountries.filter(country =>
-                    country.region.toLowerCase() === savedRegion.toLowerCase()
-                );
-                renderCountries(filtered);
-                return;
+        if (state.region !== 'all') {
+            // Find the matching option text to update the dropdown button label
+            const matchingOption = Array.from(filterOptions).find(opt => opt.dataset.region === state.region);
+            if (matchingOption) {
+                filterSelectedText.textContent = matchingOption.textContent;
             }
         }
 
-        // DEFAULT: For fresh visits, reloads, or logo clicks, clear state and show all countries
-        sessionStorage.removeItem('searchQuery');
-        sessionStorage.removeItem('selectedRegion');
-        renderCountries(allCountries);
+        applyFilters();
 
     } catch (error) {
         console.error('Failed to fetch countries data:', error);
@@ -70,14 +61,65 @@ async function fetchCountries() {
 fetchCountries();
 
 // =================================
+// Unified Filter & Render Function
+// =================================
+
+function applyFilters() {
+    const query = state.query.toLowerCase().trim();
+
+    // Filter countries based on BOTH region and search query simultaneously
+    const visibleCountries = allCountries.filter(country => {
+        const countryName = typeof country.name === 'string' ? country.name : country.name.common;
+        
+        const regionMatch = state.region === 'all' || country.region.toLowerCase() === state.region.toLowerCase();
+        
+        const nameMatch = countryName.toLowerCase().includes(query);
+        const altMatch = country.altSpellings && country.altSpellings.some(alt => alt.toLowerCase().includes(query));
+
+        return regionMatch && (nameMatch || altMatch);
+    });
+
+    renderCountries(visibleCountries);
+    updateURL();
+}
+
+// =================================
+// URL Synchronization
+// =================================
+
+function updateURL() {
+    const params = new URLSearchParams();
+    if (state.query) params.set('search', state.query);
+    if (state.region !== 'all') params.set('region', state.region);
+
+    const queryString = params.toString();
+    const newUrl = queryString ? `?${queryString}` : window.location.pathname;
+
+    // Updates URL silently without clogging the browser history stack
+    window.history.replaceState({}, '', newUrl);
+}
+
+// Listen for browser back/forward buttons to sync state automatically
+window.addEventListener('popstate', () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    state.query = urlParams.get('search') || '';
+    state.region = urlParams.get('region') || 'all';
+
+    searchInput.value = state.query;
+    
+    const matchingOption = Array.from(filterOptions).find(opt => opt.dataset.region === state.region);
+    filterSelectedText.textContent = matchingOption ? matchingOption.textContent : 'Filter by Region';
+
+    applyFilters();
+});
+
+// =================================
 // Render Function
 // =================================
 
 function renderCountries(countries) {
-    // Clear the existing grid content
     countriesGrid.innerHTML = '';
 
-    // Loop through each country and create a card element
     countries.forEach(country => {
         const card = document.createElement('a');
         card.classList.add('country-card');
@@ -86,7 +128,7 @@ function renderCountries(countries) {
         card.href = `detail.html?name=${encodeURIComponent(countryName)}`;
 
         card.innerHTML = `
-            <img src="${country.flags.svg}" alt="${countryName} flag" class="country-card__flag">
+            <img src="${country.flags.svg}" alt="" class="country-card__flag">
             <div class="country-card__content">
                 <h2 class="country-card__title">${countryName}</h2>
                 <p class="country-card__detail"><strong>Population:</strong> ${country.population.toLocaleString()}</p>
@@ -100,63 +142,63 @@ function renderCountries(countries) {
 }
 
 // =================================
-// Search Functionality
+// Filter Open/Close Helper
+// =================================
+
+function setFilterOpen(isOpen) {
+    filterContainer.classList.toggle('is-open', isOpen);
+    filterToggle.setAttribute('aria-expanded', isOpen);
+}
+
+// =================================
+// Event Listeners
 // =================================
 
 searchInput.addEventListener('input', (e) => {
-    const searchTerm = e.target.value.toLowerCase().trim();
-
-    // 1. Save search term to sessionStorage
-    sessionStorage.setItem('searchQuery', searchTerm);
-    // Clear region filter when user searches manually
-    sessionStorage.removeItem('selectedRegion');
-
-    const filteredCountries = allCountries.filter(country => {
-        const nameMatch = country.name.toLowerCase().includes(searchTerm);
-        const altSpellingMatch = country.altSpellings && country.altSpellings.some(alt =>
-            alt.toLowerCase().includes(searchTerm)
-        );
-
-        return nameMatch || altSpellingMatch;
-    });
-
-    renderCountries(filteredCountries);
+    state.query = e.target.value;
+    clearButton.style.display = state.query ? 'block' : 'none';
+    applyFilters();
 });
 
-// =================================
-// Region Filter Functionality
-// =================================
+clearButton.addEventListener('click', () => {
+    state.query = '';
+    searchInput.value = '';
+    clearButton.style.display = state.query ? 'block' : 'none';
+    
+    applyFilters();
+    searchInput.focus();
+});
 
 filterToggle.addEventListener('click', (e) => {
     e.stopPropagation();
-    filterContainer.classList.toggle('is-open');
+    // Uses the helper to toggle based on the opposite of its current open state
+    setFilterOpen(!filterContainer.classList.contains('is-open'));
 });
 
 document.addEventListener('click', () => {
-    filterContainer.classList.remove('is-open');
+    // Uses the helper to close the dropdown
+    setFilterOpen(false);
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        // Uses the helper to close on Escape
+        setFilterOpen(false);
+    }
 });
 
 filterOptions.forEach(option => {
     option.addEventListener('click', (e) => {
-        const selectedRegion = e.target.dataset.region;
-        // Update dropdown button text (e.g., "Filter by Region" -> "Europe")
-        filterSelectedText.textContent = e.target.textContent;
+        e.stopPropagation();
 
-        // 1. Save region to sessionStorage and clear search query
-        sessionStorage.setItem('selectedRegion', selectedRegion);
-        sessionStorage.removeItem('searchQuery');
+        const selectedRegion = e.currentTarget.dataset.region || 'all';
+        state.region = selectedRegion;
+        filterSelectedText.textContent = e.currentTarget.textContent;
 
-        if (!selectedRegion || selectedRegion === 'all') {
-            renderCountries(allCountries);
-            filterContainer.classList.remove('is-open');
-            return;
-        }
-
-        const filteredCountries = allCountries.filter(country =>
-            country.region.toLowerCase() === selectedRegion.toLowerCase()
-        );
-
-        renderCountries(filteredCountries);
-        filterContainer.classList.remove('is-open');
+        // Uses the helper to close after selecting an option
+        setFilterOpen(false);
+        
+        applyFilters();
+        filterToggle.focus();
     });
 });

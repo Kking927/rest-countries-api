@@ -35,7 +35,7 @@ async function fetchCountryDetails() {
         const response = await fetch('./data.json');
         const countries = await response.json();
 
-        // Safely find the country handling both string and object name formats
+        // Find the country handling both string and object name formats
         const country = countries.find(c => {
             const nameStr = typeof c.name === 'string' ? c.name : c.name.common;
             return nameStr.toLowerCase() === countryName.toLowerCase();

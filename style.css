@@ -8,6 +8,7 @@
   --grey-400: hsl(0, 0%, 50%);
   --grey-50: hsl(0, 0%, 99%);
   --white: hsl(0, 100%, 100%);
+  --focus-ring: hsl(207, 26%, 17%);
 
   /* Typography */
   --font-family: "Nunito", sans-serif;
@@ -88,6 +89,11 @@ picture {
   display: block;
 }
 
+:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 2px;
+}
+
 /* Main Styling */
 .header {
   position: relative;
@@ -154,6 +160,11 @@ picture {
   box-shadow: var(--shadow-card);
 }
 
+.search-bar:focus-within {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
 .search-bar input {
   width: 100%;
   border: none;
@@ -165,6 +176,24 @@ picture {
 .search-bar input::placeholder {
   color: var(--grey-400);
   opacity: 0.7;
+}
+
+.search-clear {
+    background: none;
+    border: none;
+    font-size: var(--fs-icon);
+    line-height: 1;
+    cursor: pointer;
+    color: var(--grey-400);
+    padding: 0 0.25rem;
+    display: flex;
+    justify-content: center;
+    align-self: center;
+    transition: color var(--transition-speed);
+}
+
+.search-clear:hover {
+    color: var(--text);
 }
 
 .filter {
@@ -217,7 +246,18 @@ picture {
 }
 
 .filter__option {
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  width: 100%;
   cursor: pointer;
+  padding: 0.25rem 0; 
+}
+
+.filter__option:hover {
+  opacity: 0.8;
 }
 
 .countries-grid {
@@ -493,6 +533,7 @@ body.dark {
   --grey-950: hsl(0, 100%, 100%);
   --grey-50: hsl(207, 26%, 17%);
   --white: hsl(209, 23%, 22%);
+  --focus-ring: hsl(0, 100%, 100%);
 
   /* Dark Mode Box Shadows */
   --shadow-header: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
